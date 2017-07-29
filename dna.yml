@@ -1,0 +1,12 @@
+---
+  name: "ambient_sound"
+  type: "neuron"
+  author: "Kalliope project team"
+
+  kalliope_supported_version:
+    - 0.4
+
+  tags:
+    - "ambient"
+    - "relax"
+    - "white sound"
