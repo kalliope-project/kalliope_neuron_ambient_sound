@@ -178,15 +178,18 @@ class Ambient_sound(NeuronModule):
         :return:
         """
         absolute_pid_file_path = SoundDatabase.get_neuron_path() + os.sep + pid_file_path
-        try:
-            with open(absolute_pid_file_path, "r") as file_open:
-                pid_str = file_open.readline()
-                if pid_str:
-                    return int(pid_str)
 
-        except IOError as e:
-            logger.error("[Ambient_sounds] I/O error(%s): %s", e.errno, e.strerror)
-            return False
+        if os.path.isfile(absolute_pid_file_path):
+            try:
+                with open(absolute_pid_file_path, "r") as file_open:
+                    pid_str = file_open.readline()
+                    if pid_str:
+                        return int(pid_str)
+
+            except IOError as e:
+                logger.error("[Ambient_sounds] I/O error(%s): %s", e.errno, e.strerror)
+                return False
+        return False
 
     def stop_last_process(self):
         """

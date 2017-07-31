@@ -20,12 +20,23 @@ kalliope install --git-url https://github.com/kalliope-project/kalliope_neuron_a
 | mplayer_path | NO       | string | /usr/bin/mplayer |                     | Path to mplayer binary. By default /usr/bin/mplayer on Debian family system |
 
 List of available sound:
+- birds
 - fireplace
+- forest
 - forest-rain
+- forest-stream
 - heavy-rain
+- mountain-steam
+- ocean-waves
+- seaside
 - stream
+- summer-rain
 - thunderstorm
+- tropical-beach
+- tropical-thunderstorm
+- urban-thunderstorm
 - wind
+- wood-sailboat
 
 
 ## Return Values
