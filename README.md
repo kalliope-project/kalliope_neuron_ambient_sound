@@ -13,11 +13,12 @@ kalliope install --git-url https://github.com/kalliope-project/kalliope_neuron_a
 
 ## Options
 
-| parameter    | required | type   | default          | choices             | comment                                                                     |
-|--------------|----------|--------|------------------|---------------------|-----------------------------------------------------------------------------|
-| state        | YES      | string |                  | "on", "off"         | Target state of the ambient sound.                                          |
-| sound_name   | NO       | string |                  | See the list bellow | If not set, a sound will be selected randomly                               |
-| mplayer_path | NO       | string | /usr/bin/mplayer |                     | Path to mplayer binary. By default /usr/bin/mplayer on Debian family system |
+| parameter         | required | type   | default          | choices             | comment                                                                     |
+|-------------------|----------|--------|------------------|---------------------|-----------------------------------------------------------------------------|
+| state             | YES      | string |                  | "on", "off"         | Target state of the ambient sound.                                          |
+| sound_name        | NO       | string |                  | See the list bellow | If not set, a sound will be selectedrandomly                                |
+| mplayer_path      | NO       | string | /usr/bin/mplayer |                     | Path to mplayer binary. By default /usr/bin/mplayer on Debian family system |
+| auto_stop_minutes | NO       | int    |                  | Integer > 1         | Number of minutes before Kalliope stop automatically the background sound   |
 
 List of available sound:
 - birds
@@ -41,9 +42,10 @@ List of available sound:
 
 ## Return Values
 
-| Name          | Description              | Type   | sample    |
-|---------------|--------------------------|--------|-----------|
-| playing_sound | The current sound played | string | fireplace |
+| Name             | Description                             | Type   | sample                                                   |
+|------------------|-----------------------------------------|--------|----------------------------------------------------------|
+| playing_sound    | The current sound played                | string | fireplace                                                |
+| available_sounds | List of available sound in the database | list   | ['fireplace', 'heavy-rain', 'tropical-beach', 'seaside'] |
 
 ## Synapses example
 
@@ -75,6 +77,19 @@ Play selected ambient sound
     - ambient_sound:
         state: "on"
         sound_name: "forest-rain"
+```
+
+Auto stop after 20 minutes
+```yml
+- name: "ambient-sleep"
+  signals:
+    - order: "ambient sound before sleeping"
+  neurons:
+    - ambient_sound:
+        state: "on"
+        auto_stop_minutes: 20
+        say_template:
+            - "I've selected {{ playing_sound }}"
 ```
 
 ## Notes
