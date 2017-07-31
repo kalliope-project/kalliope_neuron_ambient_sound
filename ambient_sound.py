@@ -107,6 +107,13 @@ class Ambient_sound(NeuronModule):
         # sound database
         self.sdb = SoundDatabase()
 
+        # message dict that will be passed to the neuron template
+        self.message = dict()
+        # add the list of available sounds
+        self.message["available_sounds"] = list()
+        for sound in self.sdb.available_sounds:
+            self.message["available_sounds"].append(sound.name)
+
         # check if sent parameters are in good state
         if self._is_parameters_ok():
             if self.state == "off":
@@ -127,10 +134,10 @@ class Ambient_sound(NeuronModule):
                     self.start_new_process(self.target_ambient_sound)
 
                     # give the current file name played to the neuron template
-                    self.message = {
-                        "playing_sound": self.target_ambient_sound.name
-                    }
-                    self.say(self.message)
+                    self.message["playing_sound"] = self.target_ambient_sound.name
+
+            # give the message dict to the neuron template
+            self.say(self.message)
 
     def _is_parameters_ok(self):
         """
