@@ -5,6 +5,9 @@ import os
 import sys
 import psutil
 import glob
+import threading
+from time import sleep
+from kalliope.core.Utils import Utils
 from kalliope.core.NeuronModule import NeuronModule, InvalidParameterException
 
 
@@ -99,6 +102,7 @@ class Ambient_sound(NeuronModule):
         self.state = kwargs.get('state', None)
         self.sound_name = kwargs.get('sound_name', None)
         self.mplayer_path = kwargs.get('mplayer_path', "/usr/bin/mplayer")
+        self.auto_stop_minutes = kwargs.get('auto_stop_minutes', None)
 
         # this is the target AmbientSound object if the user gave a sound_name to play.
         # this object will be loaded by the _is_parameters_ok function durring the check if the sound exist
@@ -136,8 +140,21 @@ class Ambient_sound(NeuronModule):
                     # give the current file name played to the neuron template
                     self.message["playing_sound"] = self.target_ambient_sound.name
 
+                    # run auto stop thread
+                    if self.auto_stop_minutes:
+                        thread_auto_stop = threading.Thread(target=self.wait_before_stop)
+                        thread_auto_stop.start()
+
             # give the message dict to the neuron template
             self.say(self.message)
+
+    def wait_before_stop(self):
+        logger.debug("[Ambient_sounds] Wait %s minutes before checking if the thread is alive" % self.auto_stop_minutes)
+        Utils.print_info("[Ambient_sounds] Wait %s minutes before stopping the ambient sound" % self.auto_stop_minutes)
+        sleep(self.auto_stop_minutes*60)  # *60 to convert received minutes into seconds
+        logger.debug("[Ambient_sounds] Time is over, Stop player")
+        Utils.print_info("[Ambient_sounds] Time is over, stopping the ambient sound")
+        self.stop_last_process()
 
     def _is_parameters_ok(self):
         """
@@ -154,6 +171,16 @@ class Ambient_sound(NeuronModule):
             if self.target_ambient_sound is None:
                 raise InvalidParameterException("[Ambient_sounds] Sound name %s does not exist" % self.sound_name)
 
+        # if wait auto_stop_minutes is set, mut be an integer or string convertible to integer
+        if self.auto_stop_minutes is not None:
+            if not isinstance(self.auto_stop_minutes, int):
+                try:
+                    self.auto_stop_minutes = int(self.auto_stop_minutes)
+                except ValueError:
+                    raise InvalidParameterException("[Ambient_sounds] auto_stop_minutes must be an integer")
+            # check auto_stop_minutes is positive
+            if self.auto_stop_minutes < 1:
+                raise InvalidParameterException("[Ambient_sounds] auto_stop_minutes must be set at least to 1 minute")
         return True
 
     @staticmethod
@@ -194,7 +221,7 @@ class Ambient_sound(NeuronModule):
                         return int(pid_str)
 
             except IOError as e:
-                logger.error("[Ambient_sounds] I/O error(%s): %s", e.errno, e.strerror)
+                logger.debug("[Ambient_sounds] I/O error(%s): %s", e.errno, e.strerror)
                 return False
         return False
 
