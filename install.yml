@@ -9,3 +9,7 @@
       apt:
         name: mplayer
         state: present
+    - name: "Install psutils"
+      apt:
+        name: psutils
+        state: present
