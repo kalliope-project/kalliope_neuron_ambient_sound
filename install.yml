@@ -10,6 +10,6 @@
         name: mplayer
         state: present
     - name: "Install psutils"
-      apt:
-        name: psutils
-        state: present
+      pip:
+        name: python-mpd2
+        version: 5.4.3
