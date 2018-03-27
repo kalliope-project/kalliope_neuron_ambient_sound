@@ -11,5 +11,5 @@
         state: present
     - name: "Install psutils"
       pip:
-        name: python-mpd2
+        name: psutil
         version: 5.4.3
