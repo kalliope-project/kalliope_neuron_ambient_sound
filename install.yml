@@ -9,3 +9,7 @@
       apt:
         name: mplayer
         state: present
+    - name: "Install psutils"
+      pip:
+        name: psutil
+        version: 5.4.3
