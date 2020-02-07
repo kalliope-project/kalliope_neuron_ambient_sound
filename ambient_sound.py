@@ -274,8 +274,9 @@ class Ambient_sound(NeuronModule):
         """
         Clean up all data stored in the pid.txt file
         """
+        absolute_pid_file_path = SoundDatabase.get_neuron_path() + os.sep + pid_file_path
         try:
-            with open(pid_file_path, "w") as file_open:
+            with open(absolute_pid_file_path, "w") as file_open:
                 file_open.close()
                 logger.debug("[Ambient_sounds] pid file cleaned")
 
